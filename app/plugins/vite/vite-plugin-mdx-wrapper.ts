@@ -3,45 +3,28 @@ import process from 'node:process'
 
 const BACKSLASH_REGEX = /\\/g
 
-export interface MdxLayoutOptions {
-  /**
-   * The path to the Wrapper component
-   * The wrapperPath will be the relative path to the project root (e.g. 'app/components/foo.tsx')
-   */
-  wrapperPath: string
-}
-
 /**
- * When the parameter is a string, it is treated as the wrapperPath for backward compatibility.
+ * When the parameter is a string, it is treated as the component path wrapperPath for backward compatibility.
  * When the parameter is a function, it is called to get the wrapperPath.
  * The wrapperPath will be the relative path to the project root (e.g. 'app/components/foo.tsx')
  */
-export type MdxLayoutPluginOptions = string | (() => string) | MdxLayoutOptions
+export type MdxWrapperPluginParam = string | ((code: string, id: string) => string)
 
-export function transformMdxLayout(options: MdxLayoutPluginOptions) {
-  // Handle path: ensure it is an absolute path and use forward slashes (for import)
-  // Calculate in advance to avoid recalculation in transform
-  let optionWrapperPath: string
-  if (typeof options === 'string') {
-    optionWrapperPath = options
-  }
-  else if (typeof options === 'function') {
-    optionWrapperPath = options()
-  }
-  else {
-    optionWrapperPath = options.wrapperPath
-  }
-  let normalizedWrapperPath = optionWrapperPath.replace(BACKSLASH_REGEX, '/')
-  if (!path.isAbsolute(normalizedWrapperPath)) {
-    normalizedWrapperPath = path.resolve(process.cwd(), optionWrapperPath).replace(BACKSLASH_REGEX, '/')
-  }
-
+export function transformMdxWrapper(param: MdxWrapperPluginParam) {
   return {
-    name: 'transform-mdx-layout',
+    name: 'transform-mdx-wrapper',
     enforce: 'pre' as const, // Run before mdx plugin
     transform(code: string, id: string) {
       if (!id.endsWith('.mdx'))
         return
+
+      // Handle path: ensure it is an absolute path and use forward slashes (for import)
+      // Calculate in advance to avoid recalculation in transform
+      const wrapperPath = typeof param === 'function' ? param(code, id) : param
+      let normalizedWrapperPath = wrapperPath.replace(BACKSLASH_REGEX, '/')
+      if (!path.isAbsolute(normalizedWrapperPath)) {
+        normalizedWrapperPath = path.resolve(process.cwd(), wrapperPath).replace(BACKSLASH_REGEX, '/')
+      }
 
       const hasFrontmatter = code.trim().startsWith('---')
       let newCode = code
