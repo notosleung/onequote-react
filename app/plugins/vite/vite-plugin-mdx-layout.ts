@@ -12,10 +12,11 @@ export interface MdxLayoutOptions {
 }
 
 /**
- * When the plugin is used with a string, it is treated as the wrapperPath for backward compatibility.
+ * When the parameter is a string, it is treated as the wrapperPath for backward compatibility.
+ * When the parameter is a function, it is called to get the wrapperPath.
  * The wrapperPath will be the relative path to the project root (e.g. 'app/components/foo.tsx')
  */
-export type MdxLayoutPluginOptions = string | MdxLayoutOptions
+export type MdxLayoutPluginOptions = string | (() => string) | MdxLayoutOptions
 
 export function transformMdxLayout(options: MdxLayoutPluginOptions) {
   // Handle path: ensure it is an absolute path and use forward slashes (for import)
@@ -23,6 +24,9 @@ export function transformMdxLayout(options: MdxLayoutPluginOptions) {
   let optionWrapperPath: string
   if (typeof options === 'string') {
     optionWrapperPath = options
+  }
+  else if (typeof options === 'function') {
+    optionWrapperPath = options()
   }
   else {
     optionWrapperPath = options.wrapperPath
