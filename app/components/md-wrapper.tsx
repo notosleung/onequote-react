@@ -11,7 +11,7 @@ interface MarkdownWrapperProps {
   }
 }
 
-// 设置meta函数，确保进入每个MDX页面时都能正确设置标题等元信息
+// set meta for the wrapper itself, it will be merged with the meta from mdx file
 export function meta({ frontmatter }: { frontmatter: MarkdownWrapperProps['frontmatter'] }) {
   return [
     { title: frontmatter.title },
