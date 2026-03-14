@@ -15,7 +15,7 @@ export function reactMdxWrapper(param: ReactMdxWrapperPluginParam) {
     name: 'react-mdx-wrapper',
     enforce: 'pre' as const, // Run before mdx plugin
     transform(code: string, id: string) {
-      if (!id.endsWith('.mdx') && !id.endsWith('.md'))
+      if (!id.endsWith('.mdx'))
         return
 
       // Handle path: ensure it is an absolute path and use forward slashes (for import)
