@@ -1,21 +1,21 @@
 import path from 'node:path'
 import process from 'node:process'
 
-const BACKSLASH_REGEX = /\\/g
+export const BACKSLASH_REGEX = /\\/g
 
 /**
  * When the parameter is a string, it is treated as the component path wrapperPath for backward compatibility.
  * When the parameter is a function, it is called to get the wrapperPath.
  * The wrapperPath will be the relative path to the project root (e.g. 'app/components/foo.tsx')
  */
-export type MdxWrapperPluginParam = string | ((code: string, id: string) => string)
+export type ReactMdxWrapperPluginParam = string | ((code: string, id: string) => string)
 
-export function transformMdxWrapper(param: MdxWrapperPluginParam) {
+export function reactMdxWrapper(param: ReactMdxWrapperPluginParam) {
   return {
-    name: 'transform-mdx-wrapper',
+    name: 'react-mdx-wrapper',
     enforce: 'pre' as const, // Run before mdx plugin
     transform(code: string, id: string) {
-      if (!id.endsWith('.mdx'))
+      if (!id.endsWith('.mdx') && !id.endsWith('.md'))
         return
 
       // Handle path: ensure it is an absolute path and use forward slashes (for import)

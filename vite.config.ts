@@ -11,7 +11,7 @@ import remarkGfm from 'remark-gfm'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
-import { transformMdxWrapper } from './app/plugins/vite/vite-plugin-mdx-wrapper'
+import { reactMdxWrapper } from './app/plugins/vite/vite-plugin-react-mdx-wrapper'
 
 // 获取 __dirname (ESM 模式下)
 const __filename = fileURLToPath(import.meta.url)
@@ -24,7 +24,7 @@ export default defineConfig({
     },
   },
   plugins: [
-    transformMdxWrapper('app/components/md-wrapper.tsx'),
+    reactMdxWrapper('app/components/md-wrapper.tsx'),
     mdx({
       remarkPlugins: [
         remarkFrontmatter,
